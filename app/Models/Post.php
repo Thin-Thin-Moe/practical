@@ -14,4 +14,19 @@ class Post extends Model
         'description',
         'author_id'
     ];
+
+    public function likes()
+    {
+        return  $this->hasMany(Like::class);
+    }
+
+    public function tags()
+    {
+        return  $this->belongsToMany(Tag::class);
+    }
+
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
 }

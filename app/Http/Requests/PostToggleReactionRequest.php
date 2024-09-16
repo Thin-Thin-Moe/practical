@@ -14,7 +14,7 @@ class PostToggleReactionRequest extends FormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'like' => filter_var($this->input('like'), FILTER_VALIDATE_BOOLEAN),
+            'like' => $this->convertToBoolean($this->input('like')),
         ]);
     }
 
@@ -24,5 +24,10 @@ class PostToggleReactionRequest extends FormRequest
             'post_id' => 'required|int|exists:posts,id',
             'like'    => 'required|boolean',
         ];
+    }
+
+    private function convertToBoolean($value): bool
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false;
     }
 }
