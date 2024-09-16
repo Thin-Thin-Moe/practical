@@ -15,13 +15,13 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-            $user = User::where('email', $request->validated('email'))->firstOrFail();
-
-            if (!Auth::attempt($request->validated())) {
+            if (!$token = Auth::guard('ctj-api')->attempt($request->only('email', 'password'))) {
                 throw new AuthenticationException('Invalid credentials');
             }
+    
+            $user = Auth::guard('ctj-api')->user();
+            return new LoginResource($user, $token);
 
-            return LoginResource::make($user);
         } catch (AuthenticationException $e) {
             return response()->json([
                 'status'  => Response::HTTP_UNAUTHORIZED,
