@@ -3,19 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Services\EmployeeManagement\Staff;
+use Illuminate\Http\JsonResponse;
+use Exception;
 
 class StaffController extends Controller
 {
-    public function __construct(private readonly Staff $staff)
+    private Staff $staff;
+
+    public function __construct(Staff $staff)
     {
+        $this->staff = $staff;
     }
-    
-    public function payroll()
+
+    public function payroll(): JsonResponse
     {
-        $data = $this->staff->salary();
-    
-        return response()->json([
-            'data' => $data
-        ]);
+        try {
+            $data = $this->staff->salary();
+
+            return response()->json([
+                'data' => $data
+            ], 200);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'Failed to retrieve salary data',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
